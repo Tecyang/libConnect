@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
+    <RemoteTarget>1766090315;192.168.191.2 (username=pi, port=22, authentication=Password)</RemoteTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
+    <PreLaunchCommand>
+    </PreLaunchCommand>
+    <DebuggerFlavor>LinuxDebugger</DebuggerFlavor>
+    <RemoteDebuggerCommandArguments>-h0.0.0.0 -p9999</RemoteDebuggerCommandArguments>
+    <RemoteTarget>1766090315;192.168.191.2 (username=pi, port=22, authentication=Password)</RemoteTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ShowAllFiles>true</ShowAllFiles>
+  </PropertyGroup>
+</Project>

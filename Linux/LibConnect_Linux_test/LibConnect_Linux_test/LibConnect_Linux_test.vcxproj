@@ -27,14 +27,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{8ba02ecb-ec87-4579-a41b-2d0effe09eca}</ProjectGuid>
+    <ProjectGuid>{78c9dd26-9b7c-4a1a-841c-28ed23575f6a}</ProjectGuid>
     <Keyword>Linux</Keyword>
-    <RootNamespace>LibConnect_Linux</RootNamespace>
+    <RootNamespace>LibConnect_Linux_test</RootNamespace>
     <MinimumVisualStudioVersion>15.0</MinimumVisualStudioVersion>
     <ApplicationType>Linux</ApplicationType>
     <ApplicationTypeRevision>1.0</ApplicationTypeRevision>
     <TargetLinuxPlatform>Generic</TargetLinuxPlatform>
-    <LinuxProjectType>{2238F9CD-F817-4ECC-BD14-2524D2669B35}</LinuxProjectType>
+    <LinuxProjectType>{D51BCBC9-82E9-4017-911E-C93873C4EA2B}</LinuxProjectType>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'" Label="Configuration">
@@ -64,15 +64,18 @@
     <IncludePath>$(IncludePath);$(ISenseIncludePath);C:\Program Files %28x86%29\Microsoft Visual Studio\2017\Enterprise\Common7\IDE\VC\Linux\include</IncludePath>
   </PropertyGroup>
   <ItemGroup>
-    <ClCompile Include="test4.c" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Global.h" />
   </ItemGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
-    <Link>
-      <LibraryDependencies>event;opencv_core</LibraryDependencies>
-    </Link>
     <RemotePreLinkEvent>
       <Command>gpio export 17 out</Command>
     </RemotePreLinkEvent>
+    <Link>
+      <LibraryDependencies>event;opencv_core</LibraryDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
