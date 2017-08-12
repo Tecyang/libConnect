@@ -1,0 +1,63 @@
+"C:\Program Files (x86)\JetBrains\CLion 2016.3.3\bin\cmake\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - MinGW Makefiles" "D:\文档\Visual Studio 2012\Projects\ConsoleApplication1"
+-- The C compiler identification is GNU 6.3.0
+-- The CXX compiler identification is GNU 6.3.0
+-- Check for working C compiler: C:/MinGW/bin/gcc.exe
+-- Check for working C compiler: C:/MinGW/bin/gcc.exe -- broken
+CMake Error at C:/Program Files (x86)/JetBrains/CLion 2016.3.3/bin/cmake/share/cmake-3.6/Modules/CMakeTestCCompiler.cmake:61 (message):
+  The C compiler "C:/MinGW/bin/gcc.exe" is not able to compile a simple test
+  program.
+
+  It fails with the following output:
+
+   Change Dir: D:/鏂囨。/Visual Studio 2012/Projects/ConsoleApplication1/cmake-build-debug/CMakeFiles/CMakeTmp
+
+  
+
+  Run Build Command:"C:/MinGW/bin/mingw32-make.exe" "cmTC_66adf/fast"
+
+  C:/MinGW/bin/mingw32-make.exe -f CMakeFiles\cmTC_66adf.dir\build.make
+  CMakeFiles/cmTC_66adf.dir/build
+
+  mingw32-make.exe[1]: Entering directory 'D:/文档/Visual Studio
+  2012/Projects/ConsoleApplication1/cmake-build-debug/CMakeFiles/CMakeTmp'
+
+  Building C object CMakeFiles/cmTC_66adf.dir/testCCompiler.c.obj
+
+  C:\MinGW\bin\gcc.exe -o CMakeFiles\cmTC_66adf.dir\testCCompiler.c.obj -c
+  "D:\鏂囨。\Visual Studio
+  2012\Projects\ConsoleApplication1\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c"
+
+
+  gcc.exe: error: D:\鏂囨。\Visual Studio
+  2012\Projects\ConsoleApplication1\cmake-build-debug\CMakeFiles\CMakeTmp\testCCompiler.c:
+  No such file or directory
+
+  gcc.exe: fatal error: no input files
+
+  compilation terminated.
+
+  CMakeFiles\cmTC_66adf.dir\build.make:64: recipe for target
+  'CMakeFiles/cmTC_66adf.dir/testCCompiler.c.obj' failed
+
+  mingw32-make.exe[1]: *** [CMakeFiles/cmTC_66adf.dir/testCCompiler.c.obj]
+  Error 1
+
+  mingw32-make.exe[1]: Leaving directory 'D:/文档/Visual Studio
+  2012/Projects/ConsoleApplication1/cmake-build-debug/CMakeFiles/CMakeTmp'
+
+  Makefile:125: recipe for target 'cmTC_66adf/fast' failed
+
+  mingw32-make.exe: *** [cmTC_66adf/fast] Error 2
+
+  
+
+  
+
+  CMake will not be able to correctly generate this project.
+Call Stack (most recent call first):
+  CMakeLists.txt:2 (project)
+
+
+-- Configuring incomplete, errors occurred!
+See also "D:/鏂囨。/Visual Studio 2012/Projects/ConsoleApplication1/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+See also "D:/鏂囨。/Visual Studio 2012/Projects/ConsoleApplication1/cmake-build-debug/CMakeFiles/CMakeError.log".
