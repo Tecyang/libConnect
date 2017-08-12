@@ -50,3 +50,14 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+/Linux/LibConnect_Linux/obj/x86/Debug
+/Linux/LibConnect_Linux/obj/x86/Debug/LibConnect_Linux.log
+/Linux/LibConnect_Linux/obj/x86/Debug/LibConnect_Linux.log
+*.log
+/Win32/.vs/LibConnect/v15
+/.vs/LibConnect/v15/.suo
+/.vs/LibConnect/v15/Browse.VC.db
+/.vs/LibConnect/v15/Browse.VC.opendb
+/.vs/LibConnect/v15/Solution.VC.db
+/.vs/LibConnect/v15/Solution.VC.db-shm
+/.vs/LibConnect/v15/Solution.VC.db-wal
