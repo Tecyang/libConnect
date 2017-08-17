@@ -16,6 +16,10 @@
 
 #define PACKAGE_MAX_LEN 1024 //最大包长
 
+#ifndef DFT_BUF_SIZE
+#define DFT_BUF_SIZE 100
+#endif
+
 #pragma pack(push,1) //开始定义数据包, 采用字节对齐方式
 /*----------------------包头---------------------*/
 typedef struct tagPACKAGEHEAD
