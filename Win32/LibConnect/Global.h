@@ -12,7 +12,7 @@
 #define ERROR_PCAP_FINDALLDEVS -1 //Error in pcap_findalldevs
 #define ERROR_PCAP_NOTINSTALL -2 //Error winpcap not install
 #define ERROR_INIT_FAIL -3 //init function fail
-
+#define ERROR_DATA_LENGTH -4
 
 #define PACKAGE_MAX_LEN 1024 //最大包长
 

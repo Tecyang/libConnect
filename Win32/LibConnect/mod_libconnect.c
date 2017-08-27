@@ -43,7 +43,7 @@
 #include "ap_config.h"
 #include "http_log.h"
 
-
+#include <string.h>
 #include <stdio.h>
 #include <libnet.h>
 //#include <pcap.h>
@@ -130,43 +130,49 @@ void cust_package_head(PACKAGE_HEAD* head, unsigned short Command, unsigned shor
 	*head = tag;
 }
 /**组包*/
-void cust_package(unsigned char package[], PACKAGE_HEAD head, unsigned char *body)
+void cust_package(unsigned char *package, PACKAGE_HEAD head, unsigned char *body)
 {
+
+	strcpy(package, &head.Command);
+	strcat(package, &head.nDataLen);
+	
 	//包头
-	int i = 2;
-	package[0] = (unsigned char)head.Command;
-	package[1] = (unsigned char)head.nDataLen;
-	//包体
-	while (*(body + i) != '\0')
-	{
-		package[i] = *(body + i);
-		i++;
-	}
 
-
-
+	strcat(package, body);
 }
-/**FIXME:连接 读取配置文件需编写*/
-int cust_link(unsigned char* _dstMac)
+//TODO:连接 读取配置文件需编写*/
+int cust_link(unsigned char* _dstMac,char **tran_data)
 {
 	//变量定义
 	libnet_ptag_t p_tag;
-	unsigned char data[] = { "1234567890" };
+	//TODO:发包数据隔离
+	/*unsigned char *data = (char *)malloc(sizeof(char)*PACKAGE_MAX_LEN);
+	size_t data_size = PACKAGE_MAX_LEN;
+
+	if (data == NULL) {
+		return ERROR_DATA_LENGTH;
+	}
+
+	memset(data, '\0', data_size);*/
+
+	//unsigned char data[] = { *tran_data };
 	PACKAGE_HEAD head;
 
-	char* src_ip_str = { "192.168.137.1" };
+	char* src_ip_str = { "192.168.18.2" };
 	int res;
 	int i = 0;
 	unsigned long  dest_ip = 0, src_ip;
-	unsigned char payload[PACKAGE_MAX_LEN];
-	extern int loadConfigDemo(const char * str);
-
+	
+	//extern int loadConfigDemo(const char * str);
+	unsigned char *payload = (unsigned char *)malloc(2*sizeof(WORD)+ strlen(*tran_data));
 
 	//loadConfigDemo("./test.conf");
 	//初始化发包头部
-	cust_package_head(&head, 0x1, sizeof(data));
+	cust_package_head(&head, 0x1, strlen(*tran_data));
+
+	
 	//组包
-	cust_package(payload, head, data);
+	cust_package(payload, head, *tran_data);
 	//目标ip转换
 	src_ip = libnet_name2addr4(l, src_ip_str, LIBNET_RESOLVE);
 	//网卡地址初始化
@@ -201,7 +207,7 @@ int cust_link(unsigned char* _dstMac)
 		(u_int8_t*)src_mac, // source mac addr这里说明你链路层的源MAC地址，如果改了可以伪装自己
 		0x2222, // protocol type ETHERTYPE_ARP
 		payload, // payload
-		sizeof(payload), // payload length
+		strlen(payload), // payload length
 		l, // libnet context
 		0 // 0 to build a new one
 	);
@@ -210,19 +216,18 @@ int cust_link(unsigned char* _dstMac)
 
 	if (-1 == (res = libnet_write(l)))
 		printf("libnet_write error!\n"), exit(1);
-
-	for (i = 0;i<10000;i++)
+	
+	//进行发包
+	if (-1 == (res = libnet_write(l)))
 	{
-		delay_50ms(2);
-		if (-1 == (res = libnet_write(l)))
-		{
 
-			ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
-				"libnet_write error!\n");
-			exit(1);
-	//		printf("libnet_write error!\n"), exit(1);
-		}
+		ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
+			"libnet_write error!\n");
+		exit(1);
+		//		printf("libnet_write error!\n"), exit(1);
 	}
+
+
 
 	return 0;
 
@@ -233,23 +238,25 @@ void cust_destroy()
 	libnet_destroy(l);
 }
 
-int testmain()
+int testmain(char **post)
 {
 	
 	unsigned char dest_mac[MAC_ADDR_LEN]
 		= { 0xb8, 0x27, 0xeb, 0x72, 0x8d, 0xb2 };
 	char errBuf[PCAP_ERRBUF_SIZE];
 
-
+	//获取本机网卡设备
+	//TODO:需要进行可配置的网卡获取
 	if (checkEth()<0)
 		return ERROR_INIT_FAIL;
-	ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
-		"Comming testmain\n");
+	//ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
+	//	"Comming testmain\n");
 
 	/* open a device, wait until a packet arrives */
 	l = libnet_init(LIBNET_LINK_ADV, device, errBuf);
+	
 	//return 1;
-	cust_link(dest_mac);
+	cust_link(dest_mac,post);
 
 	cust_destroy();
 	return 0;
@@ -321,12 +328,18 @@ static int libconnect_handler(request_rec *r)
 	memset(post, '\0', post_size);
 
 	int ret = read_post_data(r, &post, &post_size);
+	//post 为接收到的post过来的数据
+
+	//进行数据验证
 	if (ret != OK) {
 		free(post);
 		post = NULL;
 		post_size = 0;
 		return ret;
 	}
+	//验证通过 进行数据传输
+
+	testmain(&post);
 
 	ap_set_content_type(r, "text/html;charset=utf-8");
 	ap_set_content_length(r, post_size);

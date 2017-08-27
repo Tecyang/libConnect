@@ -7,6 +7,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibConnect", "Win32\LibConn
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibConnect_Linux", "Linux\LibConnect_Linux\LibConnect_Linux.vcxproj", "{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibConnect_Linux_test", "Linux\LibConnect_Linux_test\LibConnect_Linux_test\LibConnect_Linux_test.vcxproj", "{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -21,13 +23,11 @@ Global
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|ARM.Build.0 = Debug|Win32
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|Win32.ActiveCfg = Debug|Win32
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|Win32.Build.0 = Debug|Win32
-		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|x64.ActiveCfg = Debug|x64
-		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|x64.Build.0 = Debug|x64
+		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Debug|x64.ActiveCfg = Debug|Win32
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|ARM.ActiveCfg = Release|Win32
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|Win32.ActiveCfg = Release|Win32
 		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|Win32.Build.0 = Release|Win32
-		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|x64.ActiveCfg = Release|x64
-		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|x64.Build.0 = Release|x64
+		{AA7BA22F-0CF6-4590-8B57-821A92244D0A}.Release|x64.ActiveCfg = Release|Win32
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Debug|ARM.ActiveCfg = Debug|ARM
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Debug|ARM.Build.0 = Debug|ARM
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Debug|Win32.ActiveCfg = Debug|x86
@@ -40,6 +40,18 @@ Global
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Release|Win32.Build.0 = Release|x86
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Release|x64.ActiveCfg = Release|x64
 		{8BA02ECB-EC87-4579-A41B-2D0EFFE09ECA}.Release|x64.Build.0 = Release|x64
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|ARM.ActiveCfg = Debug|ARM
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|ARM.Build.0 = Debug|ARM
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|Win32.ActiveCfg = Debug|x86
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|Win32.Build.0 = Debug|x86
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|x64.ActiveCfg = Debug|x64
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Debug|x64.Build.0 = Debug|x64
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|ARM.ActiveCfg = Release|ARM
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|ARM.Build.0 = Release|ARM
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|Win32.ActiveCfg = Release|x86
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|Win32.Build.0 = Release|x86
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|x64.ActiveCfg = Release|x64
+		{78C9DD26-9B7C-4A1A-841C-28ED23575F6A}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
