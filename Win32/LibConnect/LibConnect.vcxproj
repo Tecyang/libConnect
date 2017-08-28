@@ -42,8 +42,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Program Files %28x86%29\Apache Software Foundation\Apache2.2\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Apache Software Foundation\Apache2.2\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\object\clion\LibConnect\ref\pthread\pthread\Pre-built.2\include;C:\Program Files %28x86%29\Apache Software Foundation\Apache2.2\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\object\clion\LibConnect\ref\pthread\pthread\Pre-built.2\lib;C:\Program Files %28x86%29\Apache Software Foundation\Apache2.2\lib;$(LibraryPath)</LibraryPath>
     <TargetExt>.so</TargetExt>
     <TargetName>mod_libconnect</TargetName>
   </PropertyGroup>

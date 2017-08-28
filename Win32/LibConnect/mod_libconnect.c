@@ -4,12 +4,12 @@
 **
 **  To play with this sample module first compile it into a
 **  DSO file and install it into Apache's modules directory
-**  by running:
+**  by running,0x
 **
 **    $ apxs -c -i mod_libconnect.c
 **		apxs -c -i -a mod_libconnect.c libapr-1.lib libaprutil-1.lib libapriconv-1.lib libhttpd.lib
 **  Then activate it in Apache's httpd.conf file for instance
-**  for the URL /libconnect in as follows:
+**  for the URL /libconnect in as follows,0x
 **
 **    #   httpd.conf
 **    LoadModule libconnect_module modules/mod_libconnect.so
@@ -22,17 +22,17 @@
 **    $ apachectl restart
 **
 **  you immediately can request the URL /libconnect and watch for the
-**  output of this module. This can be achieved for instance via:
+**  output of this module. This can be achieved for instance via,0x
 **
-**    $ lynx -mime_header http://localhost/libconnect
+**    $ lynx -mime_header http,0x//localhost/libconnect
 **
-**  The output should be similar to the following one:
+**  The output should be similar to the following one,0x
 **
 **    HTTP/1.1 200 OK
-**    Date: Tue, 31 Mar 1998 14:42:22 GMT
-**    Server: Apache/1.3.4 (Unix)
-**    Connection: close
-**    Content-Type: text/html
+**    Date,0x Tue, 31 Mar 1998 14,0x42,0x22 GMT
+**    Server,0x Apache/1.3.4 (Unix)
+**    Connection,0x close
+**    Content-Type,0x text/html
 **
 **    The sample page from mod_libconnect.c
 */
@@ -42,6 +42,8 @@
 #include "http_protocol.h"
 #include "ap_config.h"
 #include "http_log.h"
+
+//#include <apr_errno.h>
 
 #include <string.h>
 #include <stdio.h>
@@ -56,6 +58,7 @@
 #pragma comment(lib,"wpcap.lib")
 #pragma comment(lib,"ws2_32.lib")
 #pragma comment(lib,"libnet.lib")
+#pragma comment(lib,"pthreadVC2.lib")
 
 #pragma comment(lib,"apr-1.lib")
 #pragma comment(lib,"libapr-1.lib")
@@ -71,6 +74,9 @@ char err_buf[LIBNET_ERRBUF_SIZE];
 unsigned char src_mac[6];
 unsigned char dest_mac[6];
 request_rec *rec;
+//
+//pthread_t thread[2];//线程函数返回类型
+//pthread_mutex_t mut;//线程互斥锁类型
 
 
 struct ether_header
@@ -102,16 +108,17 @@ int checkEth()
 	i = pcap_findalldevs(&alldevs, errbuf);
 	if (i == ERROR_PCAP_FINDALLDEVS)
 	{
-	//	fprintf(stderr, "Error in pcap_findalldevs: %s\n", errbuf);
+	//	fprintf(stderr, "Error in pcap_findalldevs,0x %s\n", errbuf);
 		return ERROR_PCAP_FINDALLDEVS;
 	}
 
-	device = alldevs[0].name;
+	device = "\\Device\\NPF_{2170E295-1C69-44AD-BA37-B3497BA1337E}";//alldevs[4].name;
 	return i;
 
 }
 
 /**初始化*/
+
 int cust_Init()
 {
 	//获取网卡出错
@@ -140,12 +147,36 @@ void cust_package(unsigned char *package, PACKAGE_HEAD head, unsigned char *body
 
 	strcat(package, body);
 }
-//TODO:连接 读取配置文件需编写*/
-int cust_link(unsigned char* _dstMac,char **tran_data)
+
+//发包线程函数1
+static void* APR_THREAD_FUNC thread1(apr_thread_t *th,void *data)
+{
+	int th_num = 0;
+	int res = 0;
+	for (th_num = 0;th_num < 1000;th_num++)
+	{
+		//pthread_mutex_lock(&mut);//加锁
+		if (-1 == (res = libnet_write(l)))
+		{
+	
+			ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
+				"libnet_write error!\n");
+			exit(1);
+	
+		}
+	}
+	apr_status_t rv = NULL;
+	apr_thread_exit(th, rv);
+}
+
+
+//TODO,0x连接 读取配置文件需编写*/
+//ip.src == 28,0xd2,0x44,0x18,0xfc,0xfe
+int cust_link(unsigned char* _dstMac, char **tran_data)
 {
 	//变量定义
 	libnet_ptag_t p_tag;
-	//TODO:发包数据隔离
+	//TODO,0x发包数据隔离
 	/*unsigned char *data = (char *)malloc(sizeof(char)*PACKAGE_MAX_LEN);
 	size_t data_size = PACKAGE_MAX_LEN;
 
@@ -158,19 +189,19 @@ int cust_link(unsigned char* _dstMac,char **tran_data)
 	//unsigned char data[] = { *tran_data };
 	PACKAGE_HEAD head;
 
-	char* src_ip_str = { "192.168.18.2" };
+	char* src_ip_str = { "192.168.191.1" };
 	int res;
 	int i = 0;
 	unsigned long  dest_ip = 0, src_ip;
-	
+
 	//extern int loadConfigDemo(const char * str);
-	unsigned char *payload = (unsigned char *)malloc(2*sizeof(WORD)+ strlen(*tran_data));
+	unsigned char *payload = (unsigned char *)malloc(2 * sizeof(WORD) + strlen(*tran_data));
 
 	//loadConfigDemo("./test.conf");
 	//初始化发包头部
 	cust_package_head(&head, 0x1, strlen(*tran_data));
 
-	
+
 	//组包
 	cust_package(payload, head, *tran_data);
 	//目标ip转换
@@ -216,18 +247,43 @@ int cust_link(unsigned char* _dstMac,char **tran_data)
 
 	if (-1 == (res = libnet_write(l)))
 		printf("libnet_write error!\n"), exit(1);
+	//TODO:需要进行发包频率控制
+	//考虑多线程 接收端一样
+	//TODO:TOP1线程创建完成，需要进行加锁，多个线程共同发送，主线程进行锁定测试发包速度
+	apr_thread_t *thread_t = NULL;//线程
+	apr_threadattr_t *threadattr_t = NULL;//线程属性
+	apr_pool_t *pool_t = NULL;//线程内存池
+	apr_status_t rv;//接收返回值
 	
-	//进行发包
-	if (-1 == (res = libnet_write(l)))
+	char* buff;//初始内存大小
+	rv = apr_initialize();//apr初始化
+	rv = apr_pool_create(&pool_t, NULL);//创建内存池
+	buff = apr_palloc(pool_t,APR_MEMNODE_T_SIZE);//分配初始内存
+	//apr_threadattr_create(threadattr_t, pool_t);
+	//创建线程
+	if ((rv = apr_thread_create(&thread_t, NULL,  thread1, NULL, pool_t)) != APR_SUCCESS)
 	{
-
-		ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
-			"libnet_write error!\n");
-		exit(1);
-		//		printf("libnet_write error!\n"), exit(1);
+		return -1;
 	}
 
+	/*
+	
+	
+	for (i = 0;i < 1000000;i++)
+	{
+		//进行发包
+		if (-1 == (res = libnet_write(l)))
+		{
 
+			ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
+				"libnet_write error!\n");
+			exit(1);
+			//		printf("libnet_write error!\n"), exit(1);
+
+		}
+	}
+
+	*/
 
 	return 0;
 
@@ -241,12 +297,14 @@ void cust_destroy()
 int testmain(char **post)
 {
 	
+	//unsigned char dest_mac[MAC_ADDR_LEN]
+	//	= { 0xb8, 0x27, 0xeb, 0x72, 0x8d, 0xb2 };
 	unsigned char dest_mac[MAC_ADDR_LEN]
-		= { 0xb8, 0x27, 0xeb, 0x72, 0x8d, 0xb2 };
+		= { 0xb8,0x27 ,0xeb ,0x92 ,0x2c ,0xf0 };
 	char errBuf[PCAP_ERRBUF_SIZE];
 
 	//获取本机网卡设备
-	//TODO:需要进行可配置的网卡获取
+	//TODO,0x需要进行可配置的网卡获取
 	if (checkEth()<0)
 		return ERROR_INIT_FAIL;
 	//ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
@@ -337,10 +395,20 @@ static int libconnect_handler(request_rec *r)
 		post_size = 0;
 		return ret;
 	}
+	/*apr_thread_t **m_thread;
+	apr_threadattr_t *m_threadattr;
+	apr_pool_t *m_apr_pool_count;
+	apr_thread_start_t apr_func;
+*/
+	//apr_pool_create(m_apr_pool_count, NULL);
+	//apr_status_t apr_status;
+	//m_apr_pool_count = 0;
+
 	//验证通过 进行数据传输
-
+	//apr_status = apr_thread_create(&m_thread, NULL, apr_func, NULL,m_apr_pool_count);
 	testmain(&post);
-
+// a) 输出参数为第一个参数；
+//	b) 如果某个函数需要内部分配内存，则将一个apr_pool_t参数放在最后
 	ap_set_content_type(r, "text/html;charset=utf-8");
 	ap_set_content_length(r, post_size);
 
