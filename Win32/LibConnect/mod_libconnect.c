@@ -48,6 +48,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <libnet.h>
+#include <windows.h>
 //#include <pcap.h>
 #include <time.h>
 #include <stdlib.h>
@@ -74,9 +75,16 @@ char err_buf[LIBNET_ERRBUF_SIZE];
 unsigned char src_mac[6];
 unsigned char dest_mac[6];
 request_rec *rec;
+struct pcap_pkthdr *pktheader;
 //
 //pthread_t thread[2];//线程函数返回类型
 //pthread_mutex_t mut;//线程互斥锁类型
+
+apr_thread_t *thread_t = NULL;//线程
+apr_threadattr_t *threadattr_t = NULL;//线程属性
+apr_pool_t *pool_t = NULL;//线程内存池
+apr_status_t rv;//接收返回值
+apr_thread_mutex_t *thread_mutex_t;
 
 
 struct ether_header
@@ -151,22 +159,23 @@ void cust_package(unsigned char *package, PACKAGE_HEAD head, unsigned char *body
 //发包线程函数1
 static void* APR_THREAD_FUNC thread1(apr_thread_t *th,void *data)
 {
+	//apr_thread_mutex_lock(thread_mutex_t);
 	int th_num = 0;
 	int res = 0;
 	for (th_num = 0;th_num < 1000;th_num++)
 	{
-		//pthread_mutex_lock(&mut);//加锁
 		if (-1 == (res = libnet_write(l)))
 		{
 	
-			ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
-				"libnet_write error!\n");
+		/*	ap_log_rerror(APLOG_MARK, APLOG_ERR, 0, rec,
+				"libnet_write error!\n");*/
 			exit(1);
 	
 		}
 	}
 	apr_status_t rv = NULL;
 	apr_thread_exit(th, rv);
+	//apr_thread_mutex_unlock(thread_mutex_t);
 }
 
 
@@ -250,23 +259,21 @@ int cust_link(unsigned char* _dstMac, char **tran_data)
 	//TODO:需要进行发包频率控制
 	//考虑多线程 接收端一样
 	//TODO:TOP1线程创建完成，需要进行加锁，多个线程共同发送，主线程进行锁定测试发包速度
-	apr_thread_t *thread_t = NULL;//线程
-	apr_threadattr_t *threadattr_t = NULL;//线程属性
-	apr_pool_t *pool_t = NULL;//线程内存池
-	apr_status_t rv;//接收返回值
 	
 	char* buff;//初始内存大小
-	rv = apr_initialize();//apr初始化
-	rv = apr_pool_create(&pool_t, NULL);//创建内存池
-	buff = apr_palloc(pool_t,APR_MEMNODE_T_SIZE);//分配初始内存
-	//apr_threadattr_create(threadattr_t, pool_t);
-	//创建线程
-	if ((rv = apr_thread_create(&thread_t, NULL,  thread1, NULL, pool_t)) != APR_SUCCESS)
-	{
-		return -1;
-	}
+	//rv = apr_initialize();//apr初始化
+	//rv = apr_pool_create(&pool_t, NULL);//创建内存池
+	//buff = apr_palloc(pool_t,APR_MEMNODE_T_SIZE);//分配初始内存
+	////apr_threadattr_create(threadattr_t, pool_t);
+	////创建线程
+	//if ((rv = apr_thread_create(&thread_t, NULL,  thread1, NULL, pool_t)) != APR_SUCCESS)
+	//{
+	//	return -1;
+	//}
 
-	/*
+//	rv =apr_thread_mutex_trylock(*thread_mutex_t);
+	
+
 	
 	
 	for (i = 0;i < 1000000;i++)
@@ -283,7 +290,7 @@ int cust_link(unsigned char* _dstMac, char **tran_data)
 		}
 	}
 
-	*/
+	
 
 	return 0;
 

@@ -84,10 +84,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="mod_libconnect.c" />
+    <ClCompile Include="mod_libconnect_bywinpcap.c" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Global.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mod_libconnect_bywinpcap.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
