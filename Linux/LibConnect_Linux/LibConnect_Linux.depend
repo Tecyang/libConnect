@@ -1,0 +1,15 @@
+# depslib dependency file v1.0
+1504774994 source:/home/yxg/project/libconnect/libConnect/Linux/LibConnect_Linux/test.c
+	<pcap.h>
+	<stdio.h>
+	<stdlib.h>
+	<errno.h>
+	<sys/socket.h>
+	<netinet/in.h>
+	<arpa/inet.h>
+	<netinet/if_ether.h>
+	<pthread.h>
+	"test.h"
+
+1504774812 /home/yxg/project/libconnect/libConnect/Linux/LibConnect_Linux/test.h
+
