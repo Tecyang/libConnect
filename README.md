@@ -1,2 +1,2 @@
 # libConnect
-基于libnet的数据发送服务
+基于libpcap的数据发送服务
