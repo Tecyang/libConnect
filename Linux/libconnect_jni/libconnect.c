@@ -4,7 +4,7 @@
  *  Created on: 2017-9-12
  *      Author: root
  */
-
+#include <jni.h>
 #include "com_libconnect_jnitest_libconnect.h"
 #include "string.h"
 

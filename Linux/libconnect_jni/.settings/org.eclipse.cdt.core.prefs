@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1734663816.119825905/C_INCLUDE_PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1734663816.119825905/C_INCLUDE_PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1734663816.119825905/C_INCLUDE_PATH/value=/usr/include;usr/local/include;usr/local/apache2/include;usr/lib/jvm/java-8-openjdk-amd64/include;
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1734663816.119825905/append=true
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1734663816.119825905/appendContributed=true
