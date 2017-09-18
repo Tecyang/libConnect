@@ -8,19 +8,25 @@ top_srcdir=/usr/local/apache2
 top_builddir=/usr/local/apache2
 include /usr/local/apache2/build/special.mk
 
+CC :=   gcc
+
 #   the used tools
 APACHECTL=service apache
 
 #   additional defines, includes and libraries
-#DEFS=-Dmy_define=my_value
-#INCLUDES=-Imy/include/dir
-#LIBS=-Lmy/lib/dir -lmylib
+#DEFS=-Dmy_define=mod_pcap.h
+INCLUDES=-I/usr/local/apache2/include -I/usr/local/apr/include/apr-1 -I/usr/local/apr-util/include/apr-1 -I.
+LIBS=-L/ -lmodpcap
+
+pcap: mod_pcap.c
+	$(CC) $(INCLUDES) mod_pcap.c -fPIC -shared -o libmodpcap.so 
 
 #   the default target
-all: local-shared-build
+all: pcap local-shared-build 
+
 
 #   install the shared object file into Apache 
-install: install-modules-yes
+install: install-modules-yes restart
 
 #   cleanup
 clean:
