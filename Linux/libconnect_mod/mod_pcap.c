@@ -11,7 +11,7 @@
 #include "ap_config.h"
 #include "http_protocol.h"
 #include "mod_pcap.h"
-
+#include <apr_optional.h>
 //
 //u_char a[1024] = { 0x00, 0xd0, 0xd0, 0xa1, 0x1f, 0x40, 0x00, 0x10, 0xdb, 0x3f,
 //		0xa1, 0x35, 0x08, 0x00, 0x45, 0x00, 0x00, 0x80, 0x95, 0x11, 0x00, 0x00,
@@ -203,3 +203,7 @@ void * sendPacket(u_char* data) {
 //	}
 
 }
+//static void pcap_hooks(apr_pool_t *pool)
+//{
+//	apr_hook_handler(pcap_handler,NULL,NULL,APR_HOOK_MIDDLE);
+//}

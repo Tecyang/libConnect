@@ -13,24 +13,31 @@ CC :=   gcc
 #   the used tools
 APACHECTL=service apache
 
-#   additional defines, includes and libraries
-#DEFS=-Dmy_define=mod_pcap.h
-INCLUDES=-I/usr/local/apache2/include -I/usr/local/apr/include/apr-1 -I/usr/local/apr-util/include/apr-1 -I.
-LIBS=-L/ -lmodpcap
+#additional defines, includes and libraries
+#DEFS=-Dmy_define=
+INCLUDES=-I/usr/local/apache2/include -I/usr/local/apr/include/apr-1 -I/usr/local/apr-util/include/apr-1
+LIBS=-L/ -lpcap
 
-pcap: mod_pcap.c
-	$(CC) $(INCLUDES) mod_pcap.c -fPIC -shared -o libmodpcap.so 
+
 
 #   the default target
-all: pcap local-shared-build 
-
-
+all: pcap #local-shared-build
+	cp mod_pcap.h $(top_srcdir)/include/
+	apxs -iac -lmodpcap mod_libconnect_mod.c 
+	
+	
 #   install the shared object file into Apache 
-install: install-modules-yes restart
+install:
+	cp mod_libconnect_mod.so $(top_srcdir)/modules
+#	apxs -i mod_libconnect_mod.la libtool --finish /usr/local/apache2/modules
+# install-modules-yes restart
 
+pcap:
+	$(CC) mod_pcap.c -fPIC -shared -o libmodpcap.so $(INCLUDES)	$(LIBS)
+	cp libmodpcap.so /usr/lib/
 #   cleanup
 clean:
-	-rm -f mod_libconnect_mod.o mod_libconnect_mod.lo mod_libconnect_mod.slo mod_libconnect_mod.la 
+	-rm -f mod_libconnect_mod.o mod_libconnect_mod.lo mod_libconnect_mod.slo mod_libconnect_mod.la libmodpcap.so /usr/lib/libmodpcap.so
 
 #   simple test
 test: reload

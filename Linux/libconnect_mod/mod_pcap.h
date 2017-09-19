@@ -13,8 +13,9 @@
 #else   /* __linux__ */
 #include <stdlib.h>
 
-#endif  /* __linux__ */
 
+#endif  /* __linux__ */
+#include <apr_optional.h>
 #define PACKAGE_MAX_LEN 1024 //最大包长
 #pragma pack(push,1) //开始定义数据包, 采用字节对齐方式
 /*----------------------包头---------------------*/
@@ -49,6 +50,7 @@ void * sendPacket(u_char* data);
  * 参数:u_char* 发送数据
  * 返回值：int 状态码 正常为0
  */
+//APR_DECLARE_OPTIONAL_FN(int,pcap_Init,(u_char *data));//
 int pcap_Init(u_char *data);
 /*
  * 作者：root
