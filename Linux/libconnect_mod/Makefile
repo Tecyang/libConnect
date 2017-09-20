@@ -23,21 +23,23 @@ LIBS=-L/ -lpcap
 #   the default target
 all: pcap #local-shared-build
 	cp mod_pcap.h $(top_srcdir)/include/
-	apxs -iac -lmodpcap mod_libconnect_mod.c 
-	
+#	apxs -iac -lmodpcap mod_libconnect_mod.c 
+	$(CC) mod_libconnect_mod.c -fPIC -shared -g -o mod_libconnect_mod.so $(INCLUDES) -lmodpcap 
 	
 #   install the shared object file into Apache 
 install:
 	cp mod_libconnect_mod.so $(top_srcdir)/modules
-#	apxs -i mod_libconnect_mod.la libtool --finish /usr/local/apache2/modules
-# install-modules-yes restart
+
+		
+#apxs -i mod_libconnect_mod.la libtool --finish /usr/local/apache2/modules
+#install-modules-yes restart
 
 pcap:
-	$(CC) mod_pcap.c -fPIC -shared -o libmodpcap.so $(INCLUDES)	$(LIBS)
+	$(CC) mod_pcap.c -fPIC -shared -g -o libmodpcap.so $(INCLUDES)	$(LIBS)
 	cp libmodpcap.so /usr/lib/
 #   cleanup
 clean:
-	-rm -f mod_libconnect_mod.o mod_libconnect_mod.lo mod_libconnect_mod.slo mod_libconnect_mod.la libmodpcap.so /usr/lib/libmodpcap.so
+	-rm -f .lib mod_libconnect_mod.so mod_libconnect_mod.o mod_libconnect_mod.lo mod_libconnect_mod.slo mod_libconnect_mod.la libmodpcap.so /usr/lib/libmodpcap.so
 
 #   simple test
 test: reload

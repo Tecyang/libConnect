@@ -102,6 +102,7 @@ int pcap_Init(u_char *data) {
 	/* ask pcap for the network address and mask of the device */
 	pcap_lookupnet(dev, &netp, &maskp, errbuf);
 
+	//XXX 以下代码需要修改 在apache模块中不应该使用exit，这将会导致整个服务崩溃退出 2017-09-21 tecyang
 	/* open device for reading this time lets set it in promiscuous
 	 * mode so we can monitor traffic to another machine             */
 	descr = pcap_open_live(dev, BUFSIZ, 1, -1, errbuf);

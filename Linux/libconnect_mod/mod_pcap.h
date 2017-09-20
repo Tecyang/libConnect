@@ -31,7 +31,7 @@ typedef struct tagPACKAGEHEAD {
 #define DFT_BUF_SIZE 100
 #endif
 
-//TODO:发包接口规划
+//FIXME:发包接口规划
 /*
  * 作者：tecyang
  * 时间：2017-9-18

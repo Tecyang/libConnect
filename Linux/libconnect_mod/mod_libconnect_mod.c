@@ -50,11 +50,12 @@
 
 /* The sample content handler */
 static int libconnect_mod_handler(request_rec *r) {
+    printf("comming libconnect_mod_handler");
 	if (strcmp(r->handler, "libconnect_mod")) {
 		return DECLINED;
 	}
 	/*
-	 * TODO: 1进行post数据获取
+	 * FIXME: 1进行post数据获取
 	 */
 
 	if ((r->method_number != M_GET) && (r->method_number != M_POST)) {
@@ -81,14 +82,14 @@ static int libconnect_mod_handler(request_rec *r) {
 		return ret;
 	}
 	/*
-	 * TODO: 2发包->监听收包->输出
+	 * FIXME: 2发包->监听收包->输出
 	 */
 	pcap_Init("sss");
 
 	//testmain(&post, r);
 
 	/*
-	 * TODO: 3监听收包->输出
+	 * FIXME: 3监听收包->输出
 	 */
 	// a) 输出参数为第一个参数；
 	//	b) 如果某个函数需要内部分配内存，则将一个apr_pool_t参数放在最后
