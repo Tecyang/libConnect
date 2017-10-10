@@ -3,7 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <unistd.h>
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <netinet/if_ether.h>
@@ -26,8 +28,9 @@
 pcap_t* descr; //libpcap 指针
 char *dev; //设备名 linux 默认为eth0
 char errbuf[PCAP_ERRBUF_SIZE]; //错误信息
-unsigned char src_mac[6] = { };
-unsigned char dest_mac[6] = { };
+unsigned char src_mac[6] = { 0xb8, 0x27, 0xeb, 0x92, 0x2c, 0xf0 };
+unsigned char dest_mac[6] = { 0xb8, 0x27, 0xeb, 0x92, 0x2c, 0xf0 };
+unsigned char * rec_content="这里是测试返回数据，仅测试使用"; //接收包信息
 PACKAGE_HEAD head; //包头
 
 /*
@@ -78,7 +81,7 @@ int read_post_data(request_rec *req, char **post, size_t *post_size) {
  * 参数:u_char* 发送数据
  * 返回值：int 状态码 正常为0
  */
-int pcap_Init(u_char *data) {
+unsigned char * pcap_Init(u_char *data) {
 //	int i;
 //
 //	const u_char *packet;
@@ -96,32 +99,36 @@ int pcap_Init(u_char *data) {
 	dev = pcap_lookupdev(errbuf);
 	if (dev == NULL) {
 		fprintf(stderr, "%s\n", errbuf);
-		exit(1);
+		return ERROR_PCAP_LOOKUP;
+//		exit(1);
 	}
 
 	/* ask pcap for the network address and mask of the device */
 	pcap_lookupnet(dev, &netp, &maskp, errbuf);
 
-	//XXX 以下代码需要修改 在apache模块中不应该使用exit，这将会导致整个服务崩溃退出 2017-09-21 tecyang
 	/* open device for reading this time lets set it in promiscuous
 	 * mode so we can monitor traffic to another machine             */
+
 	descr = pcap_open_live(dev, BUFSIZ, 1, -1, errbuf);
 	if (descr == NULL) {
 		printf("pcap_open_live(): %s\n", errbuf);
-		exit(1);
+		return ERROR_PCAP_INIT;
+//		exit(1);
 	} else {
 		printf("open_live successfully");
 	}
 	/* Lets try and compile the program.. non-optimized */
 	if (pcap_compile(descr, &fp, "host 130.0.0", 0, netp) == -1) {
 		fprintf(stderr, "Error calling pcap_compile\n");
-		exit(1);
+		return ERROR_PCAP_COMPILE;
+//		exit(1);
 	}
 
 	/* set the compiled program as the filter */
 	if (pcap_setfilter(descr, &fp) == -1) {
 		fprintf(stderr, "Error setting filter\n");
-		exit(1);
+		return ERROR_PCAP_SETFILTER;
+//		exit(1);
 	}
 
 	//:构建包头
@@ -133,14 +140,76 @@ int pcap_Init(u_char *data) {
 	int num1 = 1;
 	int num2 = 2;
 	//开启线程进行发包--测试方法
-	pthread_create(&send_t, attr, (void *)sendPacket, payload);
+
+
+
+	//pthread_create(&send_t, attr, (void *) sendPacket, payload);
 	//pthread_create(&send_t1, attr, sendPacket, &num2);
 
-	pthread_join(send_t, (void**) ret);
+	//pthread_join(send_t, (void**) ret);
 	//pthread_join(send_t1, (void**) ret);
 	//  printf("thread1 return %d",**ret);
 
-	return 0;
+	sendPacket(payload);
+	int id = 0;
+	//发包后等待接收返回数据
+	//TODO::需要联机调试
+	//pcap_loop(descr, -1, getPacket, (u_char*) &id);
+
+	pcap_close(descr);
+	return rec_content;
+	//return 0;
+}
+/*
+ * 作者：root
+ * 时间：2017-10-10
+ * 方法名：getPacket
+ * 描述：构建包头
+ * 参数
+ * 返回值：void
+ */
+void getPacket(u_char * arg, const struct pcap_pkthdr * pkthdr,
+		const unsigned char *packet_content) {
+	unsigned char *mac_string;              //
+	struct ether_header *ethernet_protocol;
+	unsigned short ethernet_type;           //以太网类型
+	ethernet_protocol = (struct ether_header *) packet_content;
+	//if(ntohs(ethernet_protocol->ether_type)==0x2222){
+	mac_string = (unsigned char *) ethernet_protocol->ether_shost;    //获取源mac地址
+//	printf("Mac Source Address is %02x:%02x:%02x:%02x:%02x:%02x\n",*(mac_string+0),*(mac_string+1),*(mac_string+2),*(mac_string+3),*(mac_string+4),*(mac_string+5));
+	mac_string = (unsigned char *) ethernet_protocol->ether_dhost;     //获取目的mac
+//   	printf("Mac Destination Address is %02x:%02x:%02x:%02x:%02x:%02x\n",*(mac_string+0),*(mac_string+1),*(mac_string+2),*(mac_string+3),*(mac_string+4),*(mac_string+5));
+	ethernet_type = ethernet_protocol->ether_type;           //获得以太网的类型
+//  	printf("Ethernet type is :%04x\n",ethernet_type);
+	switch (ethernet_type) {
+	case 0x0800:
+		printf("The network layer is IP protocol\n");
+		break;           //ip
+	case 0x0806:
+		printf("The network layer is ARP protocol\n");
+		break;           //arp
+	case 0x0835:
+		printf("The network layer is RARP protocol\n");
+		break;           //rarp
+	default:
+		break;          //printf("protocol type is %04x\n",ethernet_type);break;
+	}
+	int * id = (int *) arg;
+	int * id2 = (int *) arg;
+	//TODO::需要进行协议判断
+	//	if(ethernet_type==0x2222){
+
+	//int i;
+	/*for(i=0; i<pkthdr->len; ++i)
+	 {
+	 printf(" %02x", packet_content[i]);
+	 if( (i + 1) % 16 == 0 )
+	 {
+	 printf("\n");
+	 }
+	 }
+	 printf("\n\n");*/
+	*rec_content = *packet_content;
 }
 
 /*
@@ -157,8 +226,8 @@ void cust_package_head(PACKAGE_HEAD* head, unsigned short Command,
 		unsigned short nDataLen) {
 
 	PACKAGE_HEAD tag;
-	memcpy(tag.src_mac,src_mac,6*sizeof(unsigned char));
-	memcpy(tag.dest_mac,dest_mac,6*sizeof(unsigned char));
+	memcpy(tag.src_mac, src_mac, 6 * sizeof(unsigned char));
+	memcpy(tag.dest_mac, dest_mac, 6 * sizeof(unsigned char));
 
 	tag.Command = Command;
 	tag.nDataLen = nDataLen;
@@ -173,17 +242,19 @@ void cust_package_head(PACKAGE_HEAD* head, unsigned short Command,
  * 参数:unsigned char[] 包结构, PACKAGE_HEAD 包头, unsigned char* 包体
  * 返回值：void
  */
-void cust_package(unsigned char package[], PACKAGE_HEAD head,
+//XXX::此处有问题 -- body 长度进行限制，以免溢出
+void cust_package(unsigned char *package, PACKAGE_HEAD head,
 		unsigned char *body) {
-	//包头
-	int i = 14;
-	memcpy(&package, &head.src_mac, 6 * sizeof(unsigned char));
-	memcpy(&package, &head.dest_mac, 6 * sizeof(unsigned char));
-	package[0] = (unsigned char) head.Command;
-	package[1] = (unsigned char) head.nDataLen;
-	//包体
+//包头
+	int i = 0;
+
+	strcat(package, *(&head.src_mac));
+	strcat(package, *(&head.dest_mac));
+//TODO::组包不完整
+
+//包体
 	while (*(body + i) != '\0') {
-		package[i] = *(body + i);
+		*package++ = *(body + i);
 		i++;
 	}
 

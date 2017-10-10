@@ -12,7 +12,7 @@
 
 #else   /* __linux__ */
 #include <stdlib.h>
-
+#include <pcap.h>
 
 #endif  /* __linux__ */
 #include <apr_optional.h>
@@ -30,7 +30,13 @@ typedef struct tagPACKAGEHEAD {
 #ifndef DFT_BUF_SIZE
 #define DFT_BUF_SIZE 100
 #endif
+#define ERROR_PCAP_INIT 		"pcap openlive" //pcap openlive 错误
+#define ERROR_PCAP_LOOKUP		"pcap_lookupdev"-2 //pcap_lookupdev
+#define ERROR_PCAP_COMPILE		"compile"//compile
+#define ERROR_PCAP_SETFILTER	"setfilter"//setfilter
+#define ERROR_PCAP_EUID			-1//setreuid
 
+#define SOCK_PATH    "/home/yxg/echo_socket"
 //FIXME:发包接口规划
 /*
  * 作者：tecyang
@@ -51,7 +57,7 @@ void * sendPacket(u_char* data);
  * 返回值：int 状态码 正常为0
  */
 //APR_DECLARE_OPTIONAL_FN(int,pcap_Init,(u_char *data));//
-int pcap_Init(u_char *data);
+unsigned char *  pcap_Init(u_char *data);
 /*
  * 作者：root
  * 时间：2017-9-18
@@ -83,5 +89,15 @@ void cust_package(unsigned char package[], PACKAGE_HEAD head,
  * 返回值：int
  */
 int read_post_data(request_rec *req, char **post, size_t *post_size);
+/*
+ * 作者：root
+ * 时间：2017-10-10
+ * 方法名：getPacket
+ * 描述：构建包头
+ * 参数
+ * 返回值：void
+ */
+void getPacket(u_char * arg, const struct pcap_pkthdr * pkthdr,
+		const unsigned char *packet_content);
 
 #endif /* MOD_PCAP_H_ */

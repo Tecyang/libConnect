@@ -43,14 +43,13 @@
 #include "http_protocol.h"
 #include "ap_config.h"
 #include "mod_pcap.h"
-
+#include <unistd.h>
 
 //数据缓存处理
 
 
 /* The sample content handler */
 static int libconnect_mod_handler(request_rec *r) {
-    printf("comming libconnect_mod_handler");
 	if (strcmp(r->handler, "libconnect_mod")) {
 		return DECLINED;
 	}
@@ -73,7 +72,6 @@ static int libconnect_mod_handler(request_rec *r) {
 
 	int ret = read_post_data(r, &post, &post_size);
 	//post 为接收到的post过来的数据
-
 	//进行数据验证 验证失败不接受返回
 	if (ret != OK) {
 		free(post);
@@ -84,8 +82,36 @@ static int libconnect_mod_handler(request_rec *r) {
 	/*
 	 * FIXME: 2发包->监听收包->输出
 	 */
-	pcap_Init("sss");
+	/*获取root权限*/
+		uid_t uid = getuid();//获取当前进程的user id
+		uid_t euid = geteuid();//获取当前进程的effective user id
 
+		//euid应该为0，即root权限
+		printf("befor setreuid uid: %u, euid: %u\n", uid, euid);
+		if (setreuid(euid, uid)) {//交换有效用户ID和实际用户ID
+		     perror("setreuid");
+		     return ERROR_PCAP_EUID;//出错的话还是尽早返回吧，否则后面也会报权限错误
+		}
+
+	//	uid_t uid = getuid();
+	//	if(setuid(0))
+	//	{
+	//		return ERROR_PCAP_EUID;
+	//	}
+		//此时的uid应该为0，拥有了root权限
+		printf("after setreuid uid: %u, euid: %u\n", getuid(), geteuid());
+
+
+
+	unsigned char * str = pcap_Init((u_char*)"sss");
+//	if(ret!=OK)
+//	{
+//		free(post);
+//		post = NULL;
+//		post_size = 0;
+//		return ret;
+//
+//	}
 	//testmain(&post, r);
 
 	/*
@@ -96,10 +122,15 @@ static int libconnect_mod_handler(request_rec *r) {
 	ap_set_content_type(r, "text/html;charset=utf-8");
 	ap_set_content_length(r, post_size);
 
-	if (post_size == 0) {
-		ap_rputs("no post data found", r);
-		return OK;
-	}
+//	if (post_size == 0) {
+//		ap_rputs("no post data found", r);
+//		return OK;
+//	}
+//	else
+//	{
+		ap_rputs(str, r);
+				return OK;
+//	}
 
 	return OK;
 }
