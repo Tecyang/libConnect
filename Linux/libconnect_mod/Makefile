@@ -29,7 +29,7 @@ all: pcap #local-shared-build
 #   install the shared object file into Apache 
 install:
 	cp mod_libconnect_mod.so $(top_srcdir)/modules
-
+	chmod +s $(top_srcdir)/modules/mod_libconnect_mod.so
 		
 #apxs -i mod_libconnect_mod.la libtool --finish /usr/local/apache2/modules
 #install-modules-yes restart
@@ -37,6 +37,7 @@ install:
 pcap:
 	$(CC) mod_pcap.c -fPIC -shared -g -o libmodpcap.so $(INCLUDES)	$(LIBS)
 	cp libmodpcap.so /usr/lib/
+	chmod +s /usr/lib/libmodpcap.so
 #   cleanup
 clean:
 	-rm -f .lib mod_libconnect_mod.so mod_libconnect_mod.o mod_libconnect_mod.lo mod_libconnect_mod.slo mod_libconnect_mod.la libmodpcap.so /usr/lib/libmodpcap.so

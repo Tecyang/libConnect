@@ -1,0 +1,9 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/CPLUS_INCLUDE_PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/CPLUS_INCLUDE_PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/CPLUS_INCLUDE_PATH/value=/usr/include/c++/5.4.0
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/C_INCLUDE_PATH/delimiter=\:
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/C_INCLUDE_PATH/operation=replace
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/C_INCLUDE_PATH/value=/usr/include/x86_64-linux-gnu;usr/local/include;/usr/local/apache2/include;
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/append=true
+environment/project/cdt.managedbuild.config.gnu.so.debug.1190300877/appendContributed=true
